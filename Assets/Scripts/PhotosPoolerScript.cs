@@ -7,7 +7,7 @@ public class PhotosPoolerScript : MonoBehaviour
 
     public static PhotosPoolerScript current;
     public GameObject pooledObjectsType;
-    public GameObject UIRoot;
+    //public GameObject UIRoot;
     public int pooledAmount = 20;
     public bool willGrow = true;
 
@@ -28,7 +28,6 @@ public class PhotosPoolerScript : MonoBehaviour
                 (GameObject) Instantiate(pooledObjectsType);
 
             NGUITools.SetActive(obj, false);
-            obj.transform.SetParent(UIRoot.transform);
             pooledObjects.Add(obj);
 
         }
@@ -52,7 +51,7 @@ public class PhotosPoolerScript : MonoBehaviour
             NGUITools.SetActive(obj, false);
 
             pooledObjects.Add(obj);
-            obj.transform.SetParent(UIRoot.transform);
+            obj.transform.SetParent(UIRoot.list[0].transform);
 
             return obj;
         }

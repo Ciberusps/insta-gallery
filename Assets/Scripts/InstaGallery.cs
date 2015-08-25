@@ -10,20 +10,34 @@ using BestHTTP.JSON;
 */
 public class InstaGallery : MonoBehaviour
 {
+    public string hashTag;
+    private int _lastImageCreationTime;
+
+    public GameObject texture;
+    public UILabel hashTagLabel;
+    public GameObject grid;
+    
+    private bool _firstRun;
+    public bool downloadImages;
+    public List<GameObject> allPhotoes;
+
     //Access_Token 2029806223.de28c8b.1ae64c12db4d45dcb28139d6b684ada7
     // Use this for initialization
     void Start ()
     {
         _firstRun = true;
-        RequestAllImages();
-      
+
+        if (downloadImages)
+        {
+            RequestAllImages();
+        }
+
     }
 
-    public string hashTag;
-    public GameObject texture;
-    private int _lastImageCreationTime;
-    private bool _firstRun;
-    public List<GameObject> allPhotoes; 
+    public void Update()
+    {
+                
+    }
 
     void OnRequestFinished(HTTPRequest request, HTTPResponse response)
     {
@@ -82,6 +96,12 @@ public class InstaGallery : MonoBehaviour
     public void GrabImage(string imageLink)
     {
         GameObject obj = PhotosPoolerScript.current.GetPooledObject();
+
+        allPhotoes.Add(obj);
+
+        obj.transform.SetParent(UIRoot.list[0].transform);
+
+        obj.name = "Photo_" + allPhotoes.Count;
         HTTPRequest getImageRequest =
             new HTTPRequest(new Uri(imageLink), (request, response) =>/* texture.GetComponent<UITexture>().mainTexture*/ obj.GetComponent<UITexture>().mainTexture = response.DataAsTexture2D)
                 .Send();
@@ -98,24 +118,51 @@ public class InstaGallery : MonoBehaviour
 
         obj.transform.localRotation = Quaternion.Euler(0f, 0f, UnityEngine.Random.Range(0f, 360f));
 
-        if (allPhotoes.Count == 0)
-            obj.GetComponent<UIWidget>().depth = 10;
-        else
-        {
-            BringToFront(obj);
-        }
-
-        allPhotoes.Add(obj);
+        BringToFront(obj);
     }
 
 
     public void BringToFront(GameObject obj)
     {
-        obj.GetComponent<UIWidget>().depth = allPhotoes[allPhotoes.Count - 1].GetComponent<UIWidget>().depth + 1;
+        var objDepth = obj.GetComponent<UIWidget>().depth;
+
+        if (allPhotoes.Count == 1)
+        {
+            objDepth = 11;
+        }
+        else
+        {
+            objDepth = allPhotoes[allPhotoes.Count - 2].GetComponent<UIWidget>().depth + 3;
+        }
 
         for (int i = 0; i < obj.GetComponentsInChildren<UIWidget>().Length; i++)
         {
-            obj.GetComponentsInChildren<UIWidget>()[i].depth = obj.GetComponent<UIWidget>().depth + 1;
+                obj.GetComponentsInChildren<UIWidget>()[i].depth = objDepth - 1 - i;
+        }
+
+        Debug.Log(obj.name);
+    }
+
+    public void ChangeHashTag()
+    {
+        hashTag = hashTagLabel.text;
+    }
+
+    public void GridView()
+    {
+        for (var i = 0; i < allPhotoes.Count; i++)
+        {
+            allPhotoes[i].transform.SetParent(grid.transform);
+        }
+
+        grid.GetComponent<UIGrid>().enabled = true;
+    }
+
+    public void RandomView()
+    {
+        for (var i = 0; i < allPhotoes.Count; i++)
+        {
+            allPhotoes[i].transform.SetParent(UIRoot.list[0].transform);
         }
     }
 }
