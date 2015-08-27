@@ -10,16 +10,22 @@ using BestHTTP.JSON;
 */
 public class InstaGallery : MonoBehaviour
 {
-    public string hashTag;
-    private int _lastImageCreationTime;
-
+    public static InstaGallery current;
     public GameObject texture;
     public UILabel hashTagLabel;
     public GameObject grid;
-    
-    private bool _firstRun;
+
+    //public List<GameObject> allPhotoes;
+    public List<GameObject> Photoes; 
+    public string hashTag;
     public bool downloadImages;
-    public List<GameObject> allPhotoes;
+    public int countPhotoes;
+
+    private int _lastImageCreationTime;
+    private bool _firstRun;
+    private int _maxDepth;
+    private int maxId, minId;
+    private GameObject photoGO;
 
     //Access_Token 2029806223.de28c8b.1ae64c12db4d45dcb28139d6b684ada7
     // Use this for initialization
@@ -32,6 +38,9 @@ public class InstaGallery : MonoBehaviour
             RequestAllImages();
         }
 
+        current = this;
+
+        _maxDepth = 11;
     }
 
     public void Update()
@@ -54,30 +63,57 @@ public class InstaGallery : MonoBehaviour
                 
                 for (var i = 0; i < data.Count; i++)
                 {
+                    photoGO = PhotosPoolerScript.current.GetPooledObject();
+
+                    Photo myPhoto = photoGO.GetComponent<Photo>();
+
+                    Photoes.Add(photoGO);
+
                     var dataItem = (Dictionary<string, object>) data[i];
-                    
                     var images = (Dictionary<string, object>) dataItem["images"];
-
                     var imagesItem = (Dictionary<string, object>) images["standard_resolution"];
-                    
-                    var imageLink = imagesItem["url"].ToString();
-
                     var caption = (Dictionary<string, object>)dataItem["caption"];
 
-                    var creationTime = int.Parse(caption["created_time"].ToString());
+                    myPhoto.link = imagesItem["url"].ToString();
+                    Debug.Log(myPhoto.link);
+                    //var imageLink = imagesItem["url"].ToString();
+                    myPhoto.createdTime = int.Parse(caption["created_time"].ToString());
+                    //var creationTime = int.Parse(caption["created_time"].ToString());
 
-                    if (creationTime > _lastImageCreationTime || _lastImageCreationTime == 0 || _firstRun)
+              
+                    var user12345 = (Dictionary<string, object>)dataItem["user"];
+
+
+                    myPhoto.user.name = user12345["username"].ToString();
+                    myPhoto.user.profilePicture = user12345["profile_picture"].ToString();
+                    myPhoto.user.id = user12345["id"].ToString();
+                    myPhoto.user.profilePicture = user12345["full_name"].ToString();
+
+
+                    Debug.Log(myPhoto.link);
+                    Debug.Log(myPhoto.createdTime);
+                    Debug.Log(myPhoto.user.name);
+                    Debug.Log(myPhoto.user.id);
+                    Debug.Log(myPhoto.user.id);
+                    Debug.Log(myPhoto.user.profilePicture);
+
+                    /*if (photo.createdTime > _lastImageCreationTime || _lastImageCreationTime == 0 || _firstRun)
                     {
-                        GrabImage(imageLink);
-                        print(imageLink);
+                        //GrabImage(imageLink);
+                        //print(imageLink);
                     }
 
                     if (i == 0)
                     {
-                        _lastImageCreationTime = creationTime;
-                        print(_lastImageCreationTime);  
-                    }
+                        _lastImageCreationTime = photo.createdTime;
+                        //print(_lastImageCreationTime);  
+                    }*/
 
+                }
+
+                if (data.Count == countPhotoes)
+                {
+                    RequestRecentImages();
                 }
             }
 
@@ -89,11 +125,17 @@ public class InstaGallery : MonoBehaviour
 
     public void RequestAllImages()
     {
-        HTTPRequest request = new HTTPRequest(new Uri("https://api.instagram.com/v1/tags/" + hashTag + "/media/recent?access_token=2029806223.de28c8b.1ae64c12db4d45dcb28139d6b684ada7"), OnRequestFinished);
+        HTTPRequest request = new HTTPRequest(new Uri("https://api.instagram.com/v1/tags/" + hashTag + "/media/recent?access_token=2029806223.de28c8b.1ae64c12db4d45dcb28139d6b684ada7&count=" + countPhotoes), OnRequestFinished);
         request.Send();
     }
 
-    public void GrabImage(string imageLink)
+    public void RequestRecentImages()
+    {
+        /*HTTPRequest request = new HTTPRequest(new Uri("https://api.instagram.com/v1/tags/" + hashTag + "/media/recent?access_token=2029806223.de28c8b.1ae64c12db4d45dcb28139d6b684ada7&count=" + countPhotoes + "&"), OnRequestFinished);
+        request.Send();*/
+    }
+
+    /*public void GrabImage(string imageLink)
     {
         GameObject obj = PhotosPoolerScript.current.GetPooledObject();
 
@@ -103,7 +145,7 @@ public class InstaGallery : MonoBehaviour
 
         obj.name = "Photo_" + allPhotoes.Count;
         HTTPRequest getImageRequest =
-            new HTTPRequest(new Uri(imageLink), (request, response) =>/* texture.GetComponent<UITexture>().mainTexture*/ obj.GetComponent<UITexture>().mainTexture = response.DataAsTexture2D)
+            new HTTPRequest(new Uri(imageLink), (request, response) =>/* texture.GetComponent<UITexture>().mainTexture#1# obj.GetComponent<UITexture>().mainTexture = response.DataAsTexture2D)
                 .Send();
 
         NGUITools.SetActive(obj, true);
@@ -113,42 +155,41 @@ public class InstaGallery : MonoBehaviour
         obj.GetComponent<UITexture>().height = 160;
         obj.GetComponent<UITexture>().width = 160;
 
-        obj.transform.localPosition = new Vector3(UnityEngine.Random.Range(-450f, 450f),
-            UnityEngine.Random.Range(-150f, 150f), 0f);
-
-        obj.transform.localRotation = Quaternion.Euler(0f, 0f, UnityEngine.Random.Range(0f, 360f));
+        RandomizePhotoPosition(obj);
 
         BringToFront(obj);
-    }
+    }*/
 
 
-    public void BringToFront(GameObject obj)
+    /*public void BringToFront(GameObject obj)
     {
         var objDepth = obj.GetComponent<UIWidget>().depth;
 
         if (allPhotoes.Count == 1)
         {
-            objDepth = 11;
+            objDepth = _maxDepth;
         }
         else
         {
-            objDepth = allPhotoes[allPhotoes.Count - 2].GetComponent<UIWidget>().depth + 3;
+            _maxDepth += 3;
+            objDepth = _maxDepth;
         }
 
         for (int i = 0; i < obj.GetComponentsInChildren<UIWidget>().Length; i++)
         {
-                obj.GetComponentsInChildren<UIWidget>()[i].depth = objDepth - 1 - i;
+            obj.GetComponentsInChildren<UIWidget>()[i].depth = objDepth - 1 - i;
         }
 
-        Debug.Log(obj.name);
-    }
+
+       //Debug.Log(obj.name + " " + objDepth);
+    }*/
 
     public void ChangeHashTag()
     {
         hashTag = hashTagLabel.text;
     }
 
-    public void GridView()
+    /*public void GridView()
     {
         for (var i = 0; i < allPhotoes.Count; i++)
         {
@@ -165,5 +206,13 @@ public class InstaGallery : MonoBehaviour
             allPhotoes[i].transform.SetParent(UIRoot.list[0].transform);
         }
     }
+
+    public void RandomizePhotoPosition(GameObject obj)
+    {
+        obj.transform.localPosition = new Vector3(UnityEngine.Random.Range(-550f, 550f),
+            UnityEngine.Random.Range(-150f, 150f), 0f);
+
+        obj.transform.localRotation = Quaternion.Euler(0f, 0f, UnityEngine.Random.Range(0f, 360f));
+    }*/
 }
 
