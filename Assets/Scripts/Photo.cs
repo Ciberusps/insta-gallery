@@ -77,8 +77,7 @@ public class Photo : MonoBehaviour
 
             gameObject.transform.SetParent(UIRoot.list[0].transform);
 
-            //InstaGallery.current.BringToFront(gameObject);
-
+            InstaGallery.current.BringToFront(gameObject);
 
             currentPhotoShowing = this;
 
@@ -108,7 +107,7 @@ public class Photo : MonoBehaviour
         }
     }
 
-    public class UserShar
+    public struct UserShar
     {
         public string name;
         public string profilePicture;
