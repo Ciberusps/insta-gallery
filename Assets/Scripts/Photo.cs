@@ -14,8 +14,8 @@ public class Photo : MonoBehaviour
     public string link;
     public string id;
     public UserShar user;
-
     public static Photo currentPhotoShowing;
+    public Transform target;
 
     private TweenScale _tweenScale;
     private TweenPosition _tweenPosition;
@@ -27,6 +27,13 @@ public class Photo : MonoBehaviour
         {
             tap.Tapped += tappedHandler;
         }
+
+        isShow = false;
+
+        _tweenScale = gameObject.GetComponent<TweenScale>();
+        _tweenPosition = gameObject.GetComponent<TweenPosition>();
+
+        ResetPhoto();
     }
 
     private void OnDisable()
@@ -40,12 +47,12 @@ public class Photo : MonoBehaviour
     // Use this for initialization
     void Start ()
 	{
-	    isShow = false;
+
+        /*isShow = false;
 
         _tweenScale = gameObject.GetComponent<TweenScale>();
-        _tweenPosition = gameObject.GetComponent<TweenPosition>();
-
-	}
+        _tweenPosition = gameObject.GetComponent<TweenPosition>();*/
+    }
 	
     public void ShowPhoto()
     {
@@ -68,7 +75,7 @@ public class Photo : MonoBehaviour
             _tweenScale.PlayForward();
             _tweenPosition.PlayForward();
 
-            gameObject.transform.SetParent(UIRoot.list[0].transform);
+            gameObject.transform.SetParent(target);
 
             InstaGallery.current.BringToFront(gameObject);
 
@@ -106,5 +113,15 @@ public class Photo : MonoBehaviour
         public string profilePicture;
         public string fullName;
         public string id;
+    }
+
+    public void ResetPhoto()
+    {
+        isShow = false;
+
+        InstaGallery.current.BringToGrid(gameObject);
+        gameObject.transform.localScale = Vector3.one;
+        gameObject.GetComponent<UITexture>().mainTexture = null;
+
     }
 }
