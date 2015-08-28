@@ -651,7 +651,7 @@ BoxCollider2D:
   m_Enabled: 1
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Size: {x: 160, y: 160}
+  m_Size: {x: 180, y: 240}
   m_Center: {x: 0, y: 0}
 --- !u!114 &228942573
 MonoBehaviour:
@@ -1904,7 +1904,7 @@ Prefab:
       objectReference: {fileID: 1857212585}
     - target: {fileID: 11400000, guid: fee46b827274e694aa251e2d36700135, type: 2}
       propertyPath: onClick.Array.data[0].mMethodName
-      value: RequestAllImages
+      value: TakePhotoesRequest
       objectReference: {fileID: 0}
     - target: {fileID: 11400014, guid: fee46b827274e694aa251e2d36700135, type: 2}
       propertyPath: mDepth
@@ -3134,6 +3134,11 @@ MonoBehaviour:
   m_Script: {fileID: -1496140412, guid: bb6056dc800c1084da7273cb9f23f5cb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  advancedProps: 0
+  DisableMouseInputInBuilds: 1
+  Tags:
+    tagList:
+    - Touch
 --- !u!114 &1587806124
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3622,7 +3627,7 @@ MonoBehaviour:
   Photoes: []
   hashTag: yeah54872
   downloadImages: 0
-  countPhotoes: 5
+  countPhotoes: 3
 --- !u!4 &1857212586
 Transform:
   m_ObjectHideFlags: 0
@@ -3907,7 +3912,7 @@ MonoBehaviour:
   pixelSnap: 1
   onClick:
   - mTarget: {fileID: 1857212585}
-    mMethodName: RequestAllImages
+    mMethodName: TakePhotoesRequest
     mParameters: []
     oneShot: 0
 --- !u!114 &1999145801

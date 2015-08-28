@@ -17,17 +17,9 @@ public class Photo : MonoBehaviour
 
     public static Photo currentPhotoShowing;
 
-
     private TweenScale _tweenScale;
     private TweenPosition _tweenPosition;
     private Vector3 _lastPos;
-
-
-    public Photo(int time, string link)
-    {
-        createdTime = time;
-        this.link = link;
-    }
 
     private void OnEnable()
     {
@@ -53,7 +45,6 @@ public class Photo : MonoBehaviour
         _tweenScale = gameObject.GetComponent<TweenScale>();
         _tweenPosition = gameObject.GetComponent<TweenPosition>();
 
-        _tweenPosition.from = gameObject.transform.localPosition;
 	}
 	
     public void ShowPhoto()
@@ -72,6 +63,8 @@ public class Photo : MonoBehaviour
         }
         else if (currentPhotoShowing == null)
         {
+            _tweenPosition.from = gameObject.transform.localPosition;
+
             _tweenScale.PlayForward();
             _tweenPosition.PlayForward();
 

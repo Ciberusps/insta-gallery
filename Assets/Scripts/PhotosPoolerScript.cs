@@ -29,10 +29,7 @@ public class PhotosPoolerScript : MonoBehaviour
 
             NGUITools.SetActive(obj, false);
             pooledObjects.Add(obj);
-
         }
-
-
     }
 
     public GameObject GetPooledObject()
