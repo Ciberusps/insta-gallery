@@ -13,6 +13,7 @@ public class Photo : MonoBehaviour
     public int createdTime;
     public string link;
     public string id;
+    public float allPhotoesScale;
     public UserShar user;
     public static Photo currentPhotoShowing;
     public Transform target;
@@ -119,8 +120,8 @@ public class Photo : MonoBehaviour
     {
         isShow = false;
 
-        InstaGallery.current.BringToGrid(gameObject);
-        gameObject.transform.localScale = Vector3.one;
+        InstaGallery.current.BringToPhotoStation(gameObject);
+        gameObject.transform.localScale = new Vector3(allPhotoesScale, allPhotoesScale, allPhotoesScale);
         gameObject.GetComponent<UITexture>().mainTexture = null;
 
     }

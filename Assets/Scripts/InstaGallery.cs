@@ -6,6 +6,7 @@ using System.IO;
 using System.Text;
 using BestHTTP;
 using BestHTTP.JSON;
+using DG.Tweening;
 using SimpleJSON;
 
 /*
@@ -18,6 +19,7 @@ public class InstaGallery : MonoBehaviour
     public int maxPhotoesCount;
     public string hashTag;
     public int countPhotoes;
+    public float tweenDuration;
     public UILabel hashTagLabel;
     public Transform target;
     public Transform photoStation;
@@ -146,11 +148,12 @@ public class InstaGallery : MonoBehaviour
 
         /*photoGO.GetComponent<UITexture>().height = 160;
         photoGO.GetComponent<UITexture>().width = 160;*/
+        BringToPhotoStation(photoGO);
+        BringToFront(photoGO);
 
-        //RandomizePhotoPosition(photoGO);
-        target.GetComponent<UIGrid>().enabled = true;
+        RandomizePhotoPosition(photoGO);
+        //target.GetComponent<UIGrid>().enabled = true;
 
-        //BringToFront(photoGO);
     }
 
     public void BringToFront(GameObject obj)
@@ -202,10 +205,19 @@ public class InstaGallery : MonoBehaviour
 
     public void RandomizePhotoPosition(GameObject obj)
     {
-        obj.transform.localPosition = new Vector3(UnityEngine.Random.Range(-550f, 550f),
-            UnityEngine.Random.Range(-150f, 150f), 0f);
+        obj.transform.localPosition = new Vector3(-900f, UnityEngine.Random.Range(900f, -900f), 0f);
 
-        obj.transform.localRotation = Quaternion.Euler(0f, 0f, UnityEngine.Random.Range(0f, 360f));
+        Sequence s = DOTween.Sequence();
+
+        s.Append(
+            obj.transform.DOLocalMove(new Vector3(UnityEngine.Random.Range(-550f, 550f), UnityEngine.Random.Range(-250f, 200f), 0f), tweenDuration)
+                .SetEase(Ease.OutBack));
+        s.Insert(0,
+            obj.transform.DORotate(new Vector3(UnityEngine.Random.Range(5, 15), 0, UnityEngine.Random.Range(5, 15)), tweenDuration / 2).SetEase(Ease.InQuad).SetLoops(1, LoopType.Yoyo));
+        s.Insert(0,
+            obj.transform.DORotate(new Vector3(obj.transform.localRotation.x, 0, UnityEngine.Random.Range(5, 15)), tweenDuration / 2).SetEase(Ease.InQuad).SetLoops(1, LoopType.Yoyo));
+        //s.Insert(2,
+        //  transform.DORotate(new Vector3(0, 0, 0), duration/2).SetEase(Ease.InQuad));
     }
 
     public void BringToPhotoStation(GameObject photoGO)
