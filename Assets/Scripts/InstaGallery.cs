@@ -20,12 +20,16 @@ public class InstaGallery : MonoBehaviour
     public string hashTag;
     public int countPhotoes;
     public float tweenDuration;
+    public bool downloadPhotoesOnStart;
+    public float photoUpdateRate;
+
     public UILabel hashTagLabel;
     public Transform target;
     public Transform photoStation;
     public GameObject grid;
     public List<GameObject> Photoes;
 
+    private float _nextUpdate;
     private int _lastRequestTime, _thisRequestTime;
     private bool _firstRun;
     private bool _firstRequest;
@@ -42,16 +46,30 @@ public class InstaGallery : MonoBehaviour
         _firstRun = true;
         _firstRequest = true;
         _maxDepth = 11;
+        _nextUpdate = Time.deltaTime + photoUpdateRate;
 
         nextUrl = "https://api.instagram.com/v1/tags/" + hashTag +
                   "/media/recent?access_token=2029806223.de28c8b.1ae64c12db4d45dcb28139d6b684ada7&count=" +
                   countPhotoes;
+
+        if(downloadPhotoesOnStart)
+            TakePhotoesRequest();
     }
 
     public void TakePhotoesRequest()
     {
         print(nextUrl);
         StartCoroutine("WWWRequest");
+    }
+
+    void Update()
+    {
+        if (Time.time > _nextUpdate)
+        {
+            _nextUpdate = Time.time + photoUpdateRate;
+            TakePhotoesRequest();
+            print("RequestSend");
+        }
     }
 
     public IEnumerator WWWRequest()
@@ -205,7 +223,24 @@ public class InstaGallery : MonoBehaviour
 
     public void RandomizePhotoPosition(GameObject obj)
     {
-        obj.transform.localPosition = new Vector3(-900f, UnityEngine.Random.Range(900f, -900f), 0f);
+        var randValue = Mathf.Abs(UnityEngine.Random.Range(0, 3));
+
+        switch (randValue)
+        {
+            case 0:
+                obj.transform.localPosition = new Vector3(UnityEngine.Random.Range(-1200, -900), UnityEngine.Random.Range(900f, -900f), 0f);
+                break;
+            case 1:
+                obj.transform.localPosition = new Vector3(UnityEngine.Random.Range(1200, 900), UnityEngine.Random.Range(900f, -900f), 0f);
+                break;
+            case 2:
+                obj.transform.localPosition = new Vector3(UnityEngine.Random.Range(-900, 900), UnityEngine.Random.Range(500f, 800f), 0f);
+                break;
+            case 3:
+                obj.transform.localPosition = new Vector3(UnityEngine.Random.Range(-900, 900), UnityEngine.Random.Range(-500f, -800f), 0f);
+                break;
+        }
+
 
         Sequence s = DOTween.Sequence();
 
@@ -213,9 +248,14 @@ public class InstaGallery : MonoBehaviour
             obj.transform.DOLocalMove(new Vector3(UnityEngine.Random.Range(-550f, 550f), UnityEngine.Random.Range(-250f, 200f), 0f), tweenDuration)
                 .SetEase(Ease.OutBack));
         s.Insert(0,
-            obj.transform.DORotate(new Vector3(UnityEngine.Random.Range(5, 15), 0, UnityEngine.Random.Range(5, 15)), tweenDuration / 2).SetEase(Ease.InQuad).SetLoops(1, LoopType.Yoyo));
-        s.Insert(0,
-            obj.transform.DORotate(new Vector3(obj.transform.localRotation.x, 0, UnityEngine.Random.Range(5, 15)), tweenDuration / 2).SetEase(Ease.InQuad).SetLoops(1, LoopType.Yoyo));
+            obj.transform.DORotate(new Vector3(UnityEngine.Random.value >= 0.5 ? UnityEngine.Random.Range(5f, 20f) : UnityEngine.Random.Range(-5f, 20f), 0, 0), tweenDuration / 2).SetEase(Ease.InQuad).SetLoops(2, LoopType.Yoyo));
+
+        s.Insert(1,
+            obj.transform.DORotate(new Vector3(0, 0, UnityEngine.Random.value >= 0.5  ? UnityEngine.Random.Range(5f, 20f) : UnityEngine.Random.Range(-5f, -20f)), tweenDuration*2/3)
+                .SetEase(Ease.InQuad).SetLoops(1, LoopType.Yoyo));
+
+        /*s.Insert(0,
+            obj.transform.DORotate(new Vector3(obj.transform.localRotation.x, 0, UnityEngine.Random.Range(5, 15)), tweenDuration / 2).SetEase(Ease.InQuad).SetLoops(1, LoopType.Yoyo));*/
         //s.Insert(2,
         //  transform.DORotate(new Vector3(0, 0, 0), duration/2).SetEase(Ease.InQuad));
     }
