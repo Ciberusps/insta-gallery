@@ -48,7 +48,7 @@ public class PhotosPoolerScript : MonoBehaviour
             NGUITools.SetActive(obj, false);
 
             pooledObjects.Add(obj);
-            obj.transform.SetParent(UIRoot.list[0].transform);
+            //obj.transform.SetParent(UIRoot.list[0].transform);
 
             return obj;
         }

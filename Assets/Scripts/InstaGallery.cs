@@ -36,10 +36,10 @@ public class InstaGallery : MonoBehaviour
     private int _maxDepth;
     private string maxId, nextUrl;
     private GameObject photoGO;
-
+    private GameObject photoContainerGO;
     //Access_Token 2029806223.de28c8b.1ae64c12db4d45dcb28139d6b684ada7
     // Use this for initialization
-    void Start ()
+    void Start()
     {
         current = this;
 
@@ -52,7 +52,7 @@ public class InstaGallery : MonoBehaviour
                   "/media/recent?access_token=2029806223.de28c8b.1ae64c12db4d45dcb28139d6b684ada7&count=" +
                   countPhotoes;
 
-        if(downloadPhotoesOnStart)
+        if (downloadPhotoesOnStart)
             TakePhotoesRequest();
     }
 
@@ -77,14 +77,16 @@ public class InstaGallery : MonoBehaviour
         WWW request =
             new WWW(nextUrl);
         yield return request;
-        
-        var root =  JSON.Parse(request.text);
-  
+
+        var root = JSON.Parse(request.text);
+
         var data = root["data"];
 
         for (var i = 0; i < data.Count; i++)
         {
-            photoGO = PhotosPoolerScript.current.GetPooledObject();
+            photoContainerGO = PhotosPoolerScript.current.GetPooledObject();
+
+            photoGO = photoContainerGO.transform.GetChild(0).gameObject;
 
             Photo myPhoto = photoGO.GetComponent<Photo>();
 
@@ -107,15 +109,15 @@ public class InstaGallery : MonoBehaviour
             myPhoto.user.profilePicture = user["full_name"];
 
             print(myPhoto.createdTime + " < " + _lastRequestTime);
-            
+
             if (!_firstRun && myPhoto.createdTime <= _lastRequestTime)
-            { 
+            {
                 NGUITools.SetActive(photoGO, false);
                 myPhoto.ResetPhoto();
             }
-            else if (Photoes.Count  < maxPhotoesCount)
+            else if (Photoes.Count < maxPhotoesCount)
             {
-                StartCoroutine(GrabNewImage(photoGO, myPhoto));
+                StartCoroutine(GrabNewImage(photoContainerGO, photoGO, myPhoto));
                 Photoes.Add(photoGO);
             }
         }
@@ -147,17 +149,18 @@ public class InstaGallery : MonoBehaviour
 
     }
 
-    IEnumerator GrabNewImage(GameObject photoGO, Photo photo)
+    IEnumerator GrabNewImage(GameObject photoContainerGO, GameObject photoGO, Photo photo)
     {
         //BringToGrid(photoGO);
         //photoGO.transform.SetParent(target);
         //photoGO.transform.localScale = Vector3.one;
 
+        WWW getImageRequest = new WWW(photo.link);
+        yield return getImageRequest;
+
         photoGO.name = "Photo_" + Photoes.Count;
 
-        WWW getImageRequest = new WWW(photo.link);    
-        NGUITools.SetActive(photoGO.gameObject, true);
-        yield return getImageRequest;
+        photoContainerGO.SetActive(true);
 
         //print(getImageRequest);
 
@@ -166,7 +169,11 @@ public class InstaGallery : MonoBehaviour
 
         /*photoGO.GetComponent<UITexture>().height = 160;
         photoGO.GetComponent<UITexture>().width = 160;*/
-        BringToPhotoStation(photoGO);
+        //BringToPhotoStation(photoContainerGO);
+
+        photoContainerGO.transform.SetParent(photoStation);
+        photoContainerGO.transform.localScale = Vector3.one;
+
         BringToFront(photoGO);
 
         RandomizePhotoPosition(photoGO);
@@ -251,7 +258,7 @@ public class InstaGallery : MonoBehaviour
             obj.transform.DORotate(new Vector3(UnityEngine.Random.value >= 0.5 ? UnityEngine.Random.Range(5f, 20f) : UnityEngine.Random.Range(-5f, 20f), 0, 0), tweenDuration / 2).SetEase(Ease.InQuad).SetLoops(2, LoopType.Yoyo));
 
         s.Insert(1,
-            obj.transform.DORotate(new Vector3(0, 0, UnityEngine.Random.value >= 0.5  ? UnityEngine.Random.Range(5f, 20f) : UnityEngine.Random.Range(-5f, -20f)), tweenDuration*2/3)
+            obj.transform.DORotate(new Vector3(0, 0, UnityEngine.Random.value >= 0.5 ? UnityEngine.Random.Range(5f, 20f) : UnityEngine.Random.Range(-5f, -20f)), tweenDuration * 2 / 3)
                 .SetEase(Ease.InQuad).SetLoops(1, LoopType.Yoyo));
 
         /*s.Insert(0,
@@ -263,6 +270,7 @@ public class InstaGallery : MonoBehaviour
     public void BringToPhotoStation(GameObject photoGO)
     {
         photoGO.transform.SetParent(photoStation);
+        photoGO.transform.localScale = Vector3.one;
     }
 
     public void BringToGrid(GameObject photoGO)
@@ -272,7 +280,7 @@ public class InstaGallery : MonoBehaviour
 
     public void SortByTime()
     {
-        
+
     }
 }
 

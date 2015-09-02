@@ -524,7 +524,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &228942569
 Transform:
   m_ObjectHideFlags: 0
@@ -532,14 +532,14 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 228942568}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -474, y: 142, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: .5, y: .5, z: .5}
   m_Children:
   - {fileID: 1509582946}
   - {fileID: 1368070875}
   - {fileID: 139799533}
-  m_Father: {fileID: 566663513}
-  m_RootOrder: 10
+  m_Father: {fileID: 1549453349}
+  m_RootOrder: 0
 --- !u!114 &228942570
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1444,7 +1444,7 @@ Transform:
   - {fileID: 1834977130}
   - {fileID: 1481029527}
   - {fileID: 1013596045}
-  - {fileID: 228942569}
+  - {fileID: 1549453349}
   - {fileID: 2078120199}
   - {fileID: 1282104081}
   - {fileID: 425264412}
@@ -3440,6 +3440,72 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 270, y: 350, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!1 &1549453348
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1549453349}
+  - 114: {fileID: 1549453350}
+  m_Layer: 0
+  m_Name: PhotoContainer
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1549453349
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1549453348}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 228942569}
+  m_Father: {fileID: 566663513}
+  m_RootOrder: 10
+--- !u!114 &1549453350
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1549453348}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 858a20c1b21a3f94bb5b2d3b901c9aaf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  leftAnchor:
+    target: {fileID: 0}
+    relative: 0
+    absolute: 0
+  rightAnchor:
+    target: {fileID: 0}
+    relative: 1
+    absolute: 0
+  bottomAnchor:
+    target: {fileID: 0}
+    relative: 0
+    absolute: 0
+  topAnchor:
+    target: {fileID: 0}
+    relative: 1
+    absolute: 0
+  updateAnchors: 1
+  mColor: {r: 1, g: 1, b: 1, a: 1}
+  mPivot: 4
+  mWidth: 100
+  mHeight: 100
+  mDepth: 6
+  autoResizeBoxCollider: 0
+  hideIfOffScreen: 0
+  keepAspectRatio: 0
+  aspectRatio: 1
 --- !u!1 &1587806121
 GameObject:
   m_ObjectHideFlags: 0
@@ -3952,6 +4018,7 @@ GameObject:
   - 114: {fileID: 1857212587}
   - 114: {fileID: 1857212589}
   - 114: {fileID: 1857212588}
+  - 114: {fileID: 1857212590}
   m_Layer: 0
   m_Name: InstaGallery
   m_TagString: Untagged
@@ -3965,7 +4032,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1857212584}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 952ae29ae7d4de14eaeaac83f5a2168b, type: 3}
   m_Name: 
@@ -4004,7 +4071,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3fe704989c844d643882d309411408a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pooledObjectsType: {fileID: 228942568}
+  pooledObjectsType: {fileID: 1549453348}
   pooledAmount: 50
   willGrow: 1
   pooledObjects: []
@@ -4033,6 +4100,28 @@ MonoBehaviour:
   m_FirstSelected: {fileID: 0}
   m_sendNavigationEvents: 1
   m_DragThreshold: 5
+--- !u!114 &1857212590
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1857212584}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6c5769675bd2a447bdd808d0629f3ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxPhotoesCount: 20
+  hashTag: yeah54872
+  countPhotoes: 5
+  tweenDuration: 3
+  downloadPhotoesOnStart: 1
+  photoUpdateRate: 10
+  hashTagLabel: {fileID: 0}
+  target: {fileID: 0}
+  photoStation: {fileID: 2142287678}
+  grid: {fileID: 0}
+  Photoes: []
 --- !u!1 &1999145796
 GameObject:
   m_ObjectHideFlags: 0
@@ -4271,7 +4360,7 @@ MonoBehaviour:
   anchorOffset: 0
   softBorderPadding: 1
   renderQueue: 0
-  startingRenderQueue: 3004
+  startingRenderQueue: 3006
   mClipTexture: {fileID: 0}
   mAlpha: 1
   mClipping: 3

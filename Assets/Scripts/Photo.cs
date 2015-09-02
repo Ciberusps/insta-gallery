@@ -138,10 +138,9 @@ public class Photo : MonoBehaviour
     {
         isShow = false;
 
-        InstaGallery.current.BringToPhotoStation(gameObject);
+        //InstaGallery.current.BringToPhotoStation(gameObject.transform.parent.gameObject);
         gameObject.transform.localScale = new Vector3(allPhotoesScale, allPhotoesScale, allPhotoesScale);
         gameObject.GetComponent<UITexture>().mainTexture = null;
-
     }
 
     private void Update()
